@@ -3,7 +3,7 @@ import Link from "next/link";
 import { C } from "@/lib/types";
 import type { Acta } from "@/lib/types";
 import { Card, btnP, btnS } from "@/components/ui/primitives";
-import { downloadActaPDF } from "@/lib/actasPdf";
+const openPrint = (id: string) => window.open(`/pagos/actas/${id}/print`, "_blank");
 
 function fmtFecha(iso: string) {
   if (!iso) return "—";
@@ -75,7 +75,7 @@ export function ActaListItem({ acta, onDelete }: Props) {
       <div style={{ borderTop: `1px solid ${C.niebla}`, padding: "10px 22px", background: "#F5F4F2", display: "flex", justifyContent: "flex-end", gap: 8 }}>
         <button
           type="button"
-          onClick={() => downloadActaPDF(acta)}
+          onClick={() => openPrint(acta.id)}
           style={{ ...btnS, padding: "5px 14px", fontSize: 10 }}
         >
           ↓ PDF

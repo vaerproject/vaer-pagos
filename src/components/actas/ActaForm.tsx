@@ -5,7 +5,7 @@ import type { Acta, ActaItem } from "@/lib/types";
 import { usePagos } from "@/context/PagosContext";
 import { Card, iSt, lSt, btnP, btnS } from "@/components/ui/primitives";
 import { ActaItemRow } from "@/components/actas/ActaItemRow";
-import { downloadActaPDF } from "@/lib/actasPdf";
+const openPrint = (id: string) => window.open(`/pagos/actas/${id}/print`, "_blank");
 import { TODAY_STR } from "@/lib/types";
 
 const newItemId = () => `item-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -165,7 +165,7 @@ export function ActaForm({ initial, onSave, onCancel, isEdit = false }: Props) {
       <div style={{ display: "flex", gap: 10, justifyContent: "space-between", alignItems: "center" }}>
         <button
           type="button"
-          onClick={() => downloadActaPDF(acta)}
+          onClick={() => openPrint(acta.id)}
           style={{ ...btnS, padding: "10px 20px", fontSize: 10 }}
         >
           ↓ Descargar PDF
