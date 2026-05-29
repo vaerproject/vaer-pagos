@@ -20,7 +20,8 @@ function fmtFecha(iso: string) {
 }
 
 export async function downloadActaPDF(acta: Acta): Promise<void> {
-  const { default: jsPDF } = await import("jspdf");
+  // Named import — compatible with jsPDF 4.x
+  const { jsPDF } = await import("jspdf");
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
 
   const PW  = 210;
@@ -29,15 +30,14 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
   let   y   = 22;
   const LH  = 5.8;
 
-  // ── helpers ──────────────────────────────────────────────────
-  const tc = (c: RGB3) => doc.setTextColor(c[0], c[1], c[2]);
-  const dc = (c: RGB3) => doc.setDrawColor(c[0], c[1], c[2]);
-  const fc = (c: RGB3) => doc.setFillColor(c[0], c[1], c[2]);
+  const tc  = (c: RGB3) => doc.setTextColor(c[0], c[1], c[2]);
+  const dc  = (c: RGB3) => doc.setDrawColor(c[0], c[1], c[2]);
+  const fc  = (c: RGB3) => doc.setFillColor(c[0], c[1], c[2]);
 
   const addPage = () => { doc.addPage(); y = 22; };
   const chkPage = (h: number) => { if (y + h > PH - 22) addPage(); };
 
-  // Renders each character individually to achieve real letter-spacing
+  // Render text with real per-character letter-spacing
   const spaced = (
     text: string,
     x: number,
@@ -59,13 +59,13 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
 
   // ── HEADER ───────────────────────────────────────────────────
 
-  // Left — "V A E R" wordmark
+  // Left — V A E R wordmark
   doc.setFont("helvetica", "normal");
   doc.setFontSize(24);
   tc(RGB.abismo);
   spaced("VAER", ML, y, 4);
 
-  // Right — "DOCUMENTO INTERNO" (small, spaced) above "Acta de Reunion"
+  // Right — "DOCUMENTO INTERNO" small + "Acta de Reunion"
   doc.setFontSize(6.5);
   tc(RGB.cemento);
   spaced("DOCUMENTO INTERNO", PW - MR, y - 7, 1.4, "right");
@@ -75,7 +75,7 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
   tc(RGB.abismo);
   doc.text("Acta de Reunion", PW - MR, y, { align: "right" });
 
-  // Full-width dark rule
+  // Dark horizontal rule
   y += 7;
   dc(RGB.abismo);
   doc.setLineWidth(0.6);
@@ -99,7 +99,7 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
   doc.text(fmtFecha(acta.fecha), col2, y);
   y += 3;
 
-  // Underlines below each value
+  // Underlines
   dc(RGB.niebla);
   doc.setLineWidth(0.3);
   doc.line(ML, y, col2 - 4, y);
@@ -113,13 +113,11 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
   spaced("TEMAS TRATADOS / PENDIENTES", ML, y, 1.1);
   y += 4;
 
-  // Rule under section header
   dc(RGB.niebla);
   doc.setLineWidth(0.3);
   doc.line(ML, y, PW - MR, y);
   y += 9;
 
-  // Item layout: number at ML+2, text starts at ML+14
   const NUM_X = ML + 2;
   const TX    = ML + 14;
   const TW    = PW - MR - TX;
@@ -129,19 +127,19 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
     const blockH = lines.length * LH + 9;
     chkPage(blockH);
 
-    // Number — tiny, niebla color
+    // Number — tiny, light
     doc.setFontSize(7);
     doc.setFont("helvetica", "normal");
     tc(RGB.niebla);
     doc.text(String(idx + 1).padStart(2, "0"), NUM_X, y);
 
-    // Item text
+    // Text
     doc.setFontSize(10.5);
     doc.setFont("helvetica", "normal");
     tc(item.done ? RGB.cemento : RGB.abismo);
     doc.text(lines, TX, y);
 
-    // Strikethrough for resolved
+    // Strikethrough for resolved items
     if (item.done) {
       dc(RGB.cemento);
       doc.setLineWidth(0.25);
@@ -153,7 +151,7 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
 
     y += lines.length * LH + 3;
 
-    // Thin separator between items
+    // Separator
     dc(RGB.niebla);
     doc.setLineWidth(0.15);
     doc.line(ML, y + 1.5, PW - MR, y + 1.5);
@@ -177,23 +175,19 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
     (notasLines ? notasLines.length * LH : 0) + 16,
     30,
   );
-
   chkPage(boxH + 24);
 
-  // Label
   doc.setFont("helvetica", "normal");
   doc.setFontSize(7);
   tc(RGB.cemento);
   spaced("OBSERVACIONES / NOTAS ADICIONALES", ML, y, 1.1);
   y += 4;
 
-  // Rule
   dc(RGB.niebla);
   doc.setLineWidth(0.3);
   doc.line(ML, y, PW - MR, y);
   y += 5;
 
-  // Gray background box
   fc(RGB.notasBg);
   doc.rect(ML, y, CW, boxH, "F");
   dc(RGB.niebla);
@@ -212,10 +206,10 @@ export async function downloadActaPDF(acta: Acta): Promise<void> {
     doc.text("Agregar notas, acuerdos o comentarios...", ML + 6, y + 10);
   }
 
-  // ── FOOTER (all pages) ────────────────────────────────────────
-  const totalPages: number = (doc as any).internal.getNumberOfPages
-    ? (doc as any).internal.getNumberOfPages()
-    : (doc as any).getNumberOfPages?.() ?? 1;
+  // ── FOOTER ───────────────────────────────────────────────────
+  const totalPages: number = doc.getNumberOfPages
+    ? doc.getNumberOfPages()
+    : (doc as any).internal.getNumberOfPages?.() ?? 1;
 
   for (let p = 1; p <= totalPages; p++) {
     doc.setPage(p);
