@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Fragment+Mono:ital@0;1&display=swap');
+
+:root {
+  --abismo:       #02111B;
+  --acero:        #2F4858;
+  --cemento:      #5B5750;
+  --niebla:       #CFD2CD;
+  --niebla-light: #E8EAE6;
+  --blanco:       #FBFBFB;
+  --fondo:        #EDECEA;
+
+  --vencido:      #7A3030;
+  --ok:           #2E5E3E;
+  --warning:      #7A5C20;
+
+  --ob-im:   #2F4858;
+  --ob-jmr:  #5B5750;
+  --ob-da:   #3B5248;
+  --ob-hr:   #6B4C3B;
+  --ob-fe:   #3B4A6B;
+
+  --font-body: 'Archivo', 'Helvetica Neue', sans-serif;
+  --font-mono: 'Fragment Mono', monospace;
+
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --shadow-card: 0 1px 4px rgba(2,17,27,0.07);
+  --shadow-modal: 0 40px 100px rgba(2,17,27,0.30);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 300;
+  background: var(--fondo);
+  color: var(--abismo);
+  min-height: 100vh;
+}
+
+/* ── typography utilities ── */
+.font-mono { font-family: var(--font-mono); }
+.text-tag  { font-family: var(--font-mono); font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--cemento); }
+
+/* ── scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--niebla-light); }
+::-webkit-scrollbar-thumb { background: var(--niebla); border-radius: 3px; }
+
+/* ── table reset ── */
+table { border-collapse: collapse; width: 100%; }
+
+/* ── transitions ── */
+button, a { transition: all 0.15s ease; }
