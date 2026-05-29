@@ -93,6 +93,23 @@ export interface GastoPuntual {
   comentario: string;
 }
 
+// ─── ACTAS ───────────────────────────────────────────────────
+export interface ActaItem {
+  id:   string;
+  text: string;
+  done: boolean;
+}
+
+export interface Acta {
+  id:            string;
+  obra:          string;
+  fecha:         string;
+  items:         ActaItem[];
+  notas:         string;
+  creadoEn:      string;
+  actualizadoEn: string;
+}
+
 // ─── CONSTANTS ───────────────────────────────────────────────
 export const CATEGORIAS    = ["Materiales", "Mano de obra", "Subcontrato", "Equipamiento", "Honorarios", "Otro"] as const;
 export const ESTADOS_OBRA  = ["En curso", "Pausada", "Finalizada", "Por iniciar"] as const;

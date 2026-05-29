@@ -12,6 +12,7 @@ const NAV = [
   { href: "/pagos/proveedores", label: "Proveedores"  },
   { href: "/pagos/obras",       label: "Obras"        },
   { href: "/pagos/gastos",      label: "Gastos Admin" },
+  { href: "/pagos/actas",       label: "Actas"        },
 ];
 
 export function Sidebar({ obras }: { obras: Obra[] }) {
